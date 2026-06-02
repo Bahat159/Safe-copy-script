@@ -29,8 +29,8 @@ A robust, production-ready Bash script designed for secure file transfers betwee
 Clone the repository or download the script:
 
 ```bash
-git clone https://github.com/yourusername/safe-copy.git
-cd safe-copy
+git clone https://github.com/bahat159/safe-copy-script.git
+cd safe-copy-script
 chmod +x safe_copy.sh
 ```
 
