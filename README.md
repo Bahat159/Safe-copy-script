@@ -1,6 +1,6 @@
 # 🛡️ Safe Copy Script
 
-A robust Bash script for safely copying files from one directory to another with comprehensive error handling, logging, and optional overwrite support.
+A robust, production-ready Bash script designed for secure file transfers between local directories. It prioritizes data integrity and operational safety through strict pre-flight validations, defensive error handling, structural boundary checks, and automated, timestamped logging.
 
 ---
 
