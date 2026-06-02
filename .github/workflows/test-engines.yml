@@ -1,0 +1,98 @@
+name: Polyglot Safe Copy Matrix Tests
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  test-matrix:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository Code
+      uses: actions/checkout@v4
+
+    # 1. Setup Runtime Environments
+    - name: Set up Go Environment
+      uses: actions/setup-go@v5
+      with:
+        go-version: '1.21'
+
+    - name: Set up Node.js Environment
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Set up Python Environment
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+
+    - name: Set up PHP CLI Environment
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.2'
+        tools: php-cli
+
+    # 2. Build Test Infrastructure
+    - name: Create Test Sandboxes
+      run: |
+        mkdir -p test_src test_dest empty_src
+        echo "hello" > test_src/file1.txt
+        echo "world" > test_src/file2.txt
+        echo "existing data" > test_dest/file1.txt
+        chmod +x safe_copy.sh
+
+    # 3. Execute Bash Engine Tests
+    - name: Test Bash Engine (Success & Skips)
+      run: |
+        ./safe_copy.sh test_src test_dest false
+        if [ ! -f test_dest/file2.txt ]; then echo "Bash copy failed"; exit 1; fi
+
+    - name: Test Bash Engine (Empty Source Failure Expectation)
+      run: |
+        ./safe_copy.sh empty_src test_dest false && exit 1 || exit 0
+
+    # 4. Execute Node.js Engine Tests
+    - name: Test Node.js Engine (Success & Overwrite)
+      run: |
+        node safe_copy.js test_src test_dest true
+        if [ "$(cat test_dest/file1.txt)" != "hello" ]; then echo "Node overwrite failed"; exit 1; fi
+
+    - name: Test Node.js Engine (Empty Source Failure Expectation)
+      run: |
+        node safe_copy.js empty_src test_dest false && exit 1 || exit 0
+
+    # 5. Execute Go Engine Tests
+    - name: Test Go Engine (Success Execution)
+      run: |
+        go run main.go test_src test_dest false
+
+    - name: Test Go Engine (Missing Args Failure Expectation)
+      run: |
+        go run main.go test_src && exit 1 || exit 0
+
+    # 6. Execute Python Engine Tests
+    - name: Test Python Engine (Success Execution)
+      run: |
+        python3 safe_copy.py test_src test_dest false
+
+    - name: Test Python Engine (Empty Source Failure Expectation)
+      run: |
+        python3 safe_copy.py empty_src test_dest false && exit 1 || exit 0
+
+    # 7. Execute PHP Engine Tests
+    - name: Test PHP Engine (Success Execution)
+      run: |
+        php safe_copy.php test_src test_dest false
+
+    - name: Test PHP Engine (Missing Args Failure Expectation)
+      run: |
+        php safe_copy.php && exit 1 || exit 0
+
+    # 8. Sanity Check Log File Generation
+    - name: Verify Log File Artifact Preservation
+      run: |
+        ls copy_log_*.log
