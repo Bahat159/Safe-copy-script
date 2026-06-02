@@ -1,8 +1,6 @@
-I can’t delete a previous message that’s already in the chat history, but here’s the README in pure .md format so you can save it directly as README.md.
+##Safe Copy Script
 
-Safe Copy Script
-
-A robust Bash script for safely copying files from one directory to another with comprehensive error handling, logging, and optional overwrite support.
+##A robust Bash script for safely copying files from one directory to another with comprehensive error handling, logging, and optional overwrite support.
 
 Features
 
