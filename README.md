@@ -101,6 +101,32 @@ The script checks for:
 
 ---
 
+
+## 🧪 Automated Testing & CI/CD Validation
+
+This repository includes a rigorous automation workflow that triggers on every code push or pull request to maintain cross-language parity. 
+
+### Local Manual Test Verification Sequence
+To locally simulate the continuous integration framework and test all structural edge cases across every language variant simultaneously, run this validation chunk in your terminal:
+
+```bash
+# 1. Initialize staging sandboxes
+mkdir -p test_src test_dest empty_src
+echo "Alice" > test_src/doc_a.txt
+echo "Bob" > test_src/doc_b.txt
+echo "Charlie" > test_dest/doc_a.txt  # Creates a baseline naming conflict
+
+# 2. Run localized cross-verification commands
+./safe_copy.sh test_src test_dest false       # Bash engine check (Skips doc_a)
+node safe_copy.js test_src test_dest true     # Node engine check (Overwrites doc_a)
+go run main.go test_src test_dest false       # Go engine checking pass
+python3 safe_copy.py test_src test_dest false # Python engine checking pass
+php safe_copy.php test_src test_dest false    # PHP engine checking pass
+
+# 3. Assert zero-state validation works (Should output errors safely)
+./safe_copy.sh empty_src test_dest false
+```
+
 ## 🔒 Security Considerations
 
 * Uses strict Bash mode (`set -euo pipefail`).
